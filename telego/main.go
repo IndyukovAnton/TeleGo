@@ -22,11 +22,8 @@ func NewBot(token string) Bot{
 	return bot
 }
 
-func (b Bot) SendMessage(chatId string, message Message) {
+func (b Bot) SendMessage(chatId string, message map[string]string) {
 	method := "/sendMessage"
-
-	// Убедимся, что chat_id установлен
-	message.ChatID = chatId
 
 	// Преобразуем структуру в JSON
 	jsonBody, err := json.Marshal(message)
@@ -62,6 +59,35 @@ func (b Bot) SendMessage(chatId string, message Message) {
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("Unexpected status code: %d\n", resp.StatusCode)
 	}
+}
+
+func (b Bot) GetUpdate() TelegramResponse {
+	method := "/getUpdates"
+	fullURL := b.URL + method
+
+	req, err := http.NewRequest("GET", fullURL, nil)
+	if err != nil {
+			log.Fatal("Error creating request:", err)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+			log.Fatal("Error sending request:", err)
+	}
+	defer resp.Body.Close()
+
+	// Читаем тело ответа
+	var responceData TelegramResponse
+
+	decoder := json.NewDecoder(resp.Body)
+	err = decoder.Decode(&responceData)
+
+	if err != nil {
+			log.Fatal("Error decoding JSON:", err)
+	}
+
+	return responceData
 }
 
 func (b Bot) ListenerMessages() {
