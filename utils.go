@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/telego/telego"
+	"github.com/TeleGo/telego"
 )
 
 func LogLastMessage(message telego.Message) {

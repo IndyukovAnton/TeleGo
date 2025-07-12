@@ -1,4 +1,4 @@
-module github.com/telego
+module github.com/TeleGo
 
 go 1.22.0
 

@@ -3,7 +3,7 @@ package handlers
 import (
 	"strconv"
 
-	"github.com/telego/telego"
+	"github.com/TeleGo/telego"
 )
 
 func StartHandler(bot telego.Bot, message telego.Message) {

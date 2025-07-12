@@ -1,14 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
 
+	"github.com/TeleGo/handlers"
+	"github.com/TeleGo/models"
+	"github.com/TeleGo/telego"
 	"github.com/joho/godotenv"
-	"github.com/telego/handlers"
-	"github.com/telego/models"
-	"github.com/telego/telego"
 )
 
 func NewHandler(condition telego.Condition, action telego.Action) telego.Handler {
@@ -56,5 +57,9 @@ func main() {
 	bot.RegisterHandler(handlerEnd)
 	bot.RegisterHandler(defaultHandler)
 
+	fmt.Println("Bot running!")
+
 	bot.ListenerMessages()
+
+	fmt.Println("Bot finished")
 }
