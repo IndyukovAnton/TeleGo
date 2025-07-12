@@ -5,8 +5,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -26,11 +24,16 @@ func NewBot(token string) Bot{
 	return bot
 }
 
-func (b *Bot) SendMessage(chatId string, message map[string]string) {
+func (b *Bot) SendMessage(chat_id string, text string) {
 	method := "/sendMessage"
 
+	smessage := SendingMessage{
+		ChatID: chat_id,
+		Text: text,
+	}
+
 	// Преобразуем структуру в JSON
-	jsonBody, err := json.Marshal(message)
+	jsonBody, err := json.Marshal(smessage)
 	if err != nil {
 		log.Fatal("Error converting message to JSON:", err)
 	}
@@ -54,11 +57,6 @@ func (b *Bot) SendMessage(chatId string, message map[string]string) {
 		log.Fatal("Error sending message:", err)
 	}
 	defer resp.Body.Close()
-
-	// Читаем ответ, чтобы понять, в чём ошибка
-	// bodyBytes, _ := io.ReadAll(resp.Body)
-	// log.Printf("Status code: %d", resp.StatusCode)
-	// log.Printf("Response body: %s", bodyBytes)
 
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("Unexpected status code: %d\n", resp.StatusCode)
@@ -118,21 +116,11 @@ func (b *Bot) ListenerMessages() {
 		if (lastMessage != currentMessage) {
 			lastMessage = currentMessage
 
-			switch strings.ToLower(lastMessage.Text) {
-			case "/start":
-				message := map[string]string{
-					"chat_id": strconv.Itoa(lastMessage.Chat.ID),
-					"text": "Привет, я написанный на собственно-разработанной библиотеки для работы с telegramAPI",
+			for _, handler := range b.Handlers {
+				if (handler.Condition(lastMessage.Text)) {
+					handler.Action(*b, lastMessage)
+					break
 				}
-
-				b.SendMessage(strconv.Itoa(lastMessage.Chat.ID), message)
-			case "/end":
-				message := map[string]string{
-					"chat_id": strconv.Itoa(lastMessage.Chat.ID),
-					"text": "Пока пока, надеюсь ты ещё зайдёшь!",
-				}
-
-				b.SendMessage(strconv.Itoa(lastMessage.Chat.ID), message)
 			}
 		}
 

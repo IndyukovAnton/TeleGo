@@ -13,6 +13,11 @@ type User struct {
 	LanguageCode string  `json:"language_code"`
 }
 
+type SendingMessage struct {
+	ChatID string `json:"chat_id"`
+	Text   string `json:"text"`
+}
+
 type Message struct {
 	MessageID int       `json:"message_id"`
 	From      User      `json:"from"`
@@ -30,3 +35,7 @@ type TelegramResponse struct {
 	Ok     bool      `json:"ok"`
 	Result []Update  `json:"result"`
 }
+
+type Condition func(template string) bool;
+
+type Action func(bot Bot, message Message)

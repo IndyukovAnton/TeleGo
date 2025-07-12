@@ -1,4 +1,6 @@
 package telego
 
-type Handler func(template string, message Message);
-
+type Handler struct {
+	Condition func(template string) bool
+	Action Action
+}
