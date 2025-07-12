@@ -5,7 +5,7 @@ type Chat struct {
 }
 
 type User struct {
-	ID           float64 `json:"id"`
+	ID           int `json:"id"`
 	IsBot        bool    `json:"is_bot"`
 	FirstName    string  `json:"first_name"`
 	LastName     string  `json:"last_name"`

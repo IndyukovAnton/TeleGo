@@ -27,15 +27,11 @@ func main() {
 	}
 
 	_ = message
+
 	
-	bot.SendMessage(chatID, message)
+	// bot.SendMessage(chatID, message)
 
-	messages := bot.GetUpdate()
-
-	result := messages.Result
-	firstMessage := result[0].Message
-
-	LogLastMessage(firstMessage)
+	bot.ListenerMessages()
 }
 
 func LogLastMessage(message telego.Message) {

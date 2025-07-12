@@ -3,26 +3,30 @@ package telego
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
+	"time"
 )
 
 type Bot struct {
 	Token string
 	URL string
+	Handlers []Handler
 }
 
 func NewBot(token string) Bot{
 	bot := Bot{
 		Token: token,
 		URL: "https://api.telegram.org/bot" + token,
+		Handlers : []Handler{},
 	}
 
 	return bot
 }
 
-func (b Bot) SendMessage(chatId string, message map[string]string) {
+func (b *Bot) SendMessage(chatId string, message map[string]string) {
 	method := "/sendMessage"
 
 	// Преобразуем структуру в JSON
@@ -61,7 +65,7 @@ func (b Bot) SendMessage(chatId string, message map[string]string) {
 	}
 }
 
-func (b Bot) GetUpdate() TelegramResponse {
+func (b *Bot) GetUpdate() TelegramResponse {
 	method := "/getUpdates"
 	fullURL := b.URL + method
 
@@ -90,6 +94,48 @@ func (b Bot) GetUpdate() TelegramResponse {
 	return responceData
 }
 
-func (b Bot) ListenerMessages() {
-	fmt.Println(b.Token)
+func (b *Bot) RegisterHandler(handler Handler) {
+	b.Handlers = append(b.Handlers, handler)
+}
+
+func (b *Bot) ListenerMessages() {
+
+	reactionTimeInSecond := 1
+	duration := time.Duration(reactionTimeInSecond)*time.Second
+
+	var lastMessage Message;
+
+	for {
+		messages := b.GetUpdate()
+		result := messages.Result
+
+		if (len(result) == 0) { 
+			return
+		}
+
+		currentMessage := result[len(result)-1].Message
+
+		if (lastMessage != currentMessage) {
+			lastMessage = currentMessage
+
+			switch strings.ToLower(lastMessage.Text) {
+			case "/start":
+				message := map[string]string{
+					"chat_id": strconv.Itoa(lastMessage.Chat.ID),
+					"text": "Привет, я написанный на собственно-разработанной библиотеки для работы с telegramAPI",
+				}
+
+				b.SendMessage(strconv.Itoa(lastMessage.Chat.ID), message)
+			case "/end":
+				message := map[string]string{
+					"chat_id": strconv.Itoa(lastMessage.Chat.ID),
+					"text": "Пока пока, надеюсь ты ещё зайдёшь!",
+				}
+
+				b.SendMessage(strconv.Itoa(lastMessage.Chat.ID), message)
+			}
+		}
+
+		time.Sleep(duration)
+	}
 }
