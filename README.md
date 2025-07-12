@@ -1,6 +1,15 @@
 # TeleGo
 Go library for working with Telegram
 
+
+# Future:
+
+* Add more functions
+* Add functions for working with ENV
+* Add dirs structure rules
+* General code and interaction improvements
+
+
 download:
 
 ```
