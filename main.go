@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/TeleGo/handlers"
-	"github.com/TeleGo/models"
-	"github.com/TeleGo/telego"
+	"github.com/IndyukovAnton/TeleGo/handlers"
+	"github.com/IndyukovAnton/TeleGo/models"
+	"github.com/IndyukovAnton/TeleGo/telego"
 	"github.com/joho/godotenv"
 )
 
